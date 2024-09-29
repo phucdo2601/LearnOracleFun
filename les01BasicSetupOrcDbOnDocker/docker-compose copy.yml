@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  learn-oracle-db:
+    image: container-registry.oracle.com/database/express:latest
+    container_name: learn-oracle-db
+    environment:
+      - ORACLE_SID=ORCLCDB  # Oracle system identifier (SID)
+      - ORACLE_PDB=ORCLPDB1 # Oracle pluggable database (PDB)
+      - ORACLE_PWD=YourPassword123  # SYS and SYSTEM user password
+      - ORACLE_CHARACTERSET=AL32UTF8 # Character set for the database
+    ports:
+      - "1521:1521" # Oracle Listener port
+      - "5500:5500" # Oracle Enterprise Manager Express HTTP port
+    volumes:
+      - oracle-data:/opt/oracle/oradata # Persistent storage
+    restart: always
+    networks:
+      - oracle-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus SYSTEM/YourPassword123@localhost:1521/ORCLCDB"]
+      interval: 1m
+      timeout: 30s
+      retries: 10
+
+volumes:
+  oracle-data:
+    driver: local
+
+networks:
+  oracle-network:
+    driver: bridge

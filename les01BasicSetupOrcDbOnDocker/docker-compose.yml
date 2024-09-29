@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  learn-oracle-db:
+    image: container-registry.oracle.com/database/express:latest
+    container_name: learn-oracle-db
+    environment:
+      #- ORACLE_ID=ORCL01 # Oracle system identifier (SID)
+      - ORACLE_PWD=12345678@Abc  # SYS and SYSTEM user password
+      - ORACLE_ALLOW_REMOTE=true     # Allow remote connections
+    ports:
+      - "1522:1521"   # Oracle Listener port
+      - "5501:5500"   # Oracle Enterprise Manager (EM Express) web port
+    volumes:
+      - oracle-data:/opt/oracle/oradata  # Persistent storage for Oracle data files
+    networks:
+      - oracle-network
+
+volumes:
+  oracle-data:
+    driver: local
+
+networks:
+  oracle-network:
+    driver: bridge
